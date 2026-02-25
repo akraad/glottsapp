@@ -1,0 +1,652 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Glotts | یادگیری زبان با مسیر هوشمند</title>
+  <meta name="description" content="Glotts یک اپ یادگیری زبان با مسیر شخصی‌سازی‌شده، تمرین روزانه و بازخورد هوشمند است." />
+  <meta property="og:title" content="Glotts | یادگیری زبان با مسیر هوشمند" />
+  <meta property="og:description" content="تمرین کوتاه، پیشرفت مداوم، و برنامه یادگیری شخصی‌سازی‌شده در Glotts." />
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="fa_IR" />
+  <meta name="theme-color" content="#0f5c56" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg-1: #f3f0e8;
+      --bg-2: #e8f3ef;
+      --ink: #1a262c;
+      --muted: #425662;
+      --teal-700: #0f5c56;
+      --teal-600: #178177;
+      --teal-300: #95cfc2;
+      --sand: #ffd3a7;
+      --card: rgba(255, 255, 255, 0.84);
+      --stroke: rgba(26, 38, 44, 0.1);
+      --shadow: 0 28px 78px rgba(16, 45, 41, 0.14);
+      --radius-lg: 28px;
+      --radius-md: 18px;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; }
+
+    body {
+      min-height: 100vh;
+      font-family: "Vazirmatn", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 86% 16%, rgba(23, 129, 119, 0.24), transparent 31%),
+        radial-gradient(circle at 8% 88%, rgba(255, 163, 87, 0.24), transparent 32%),
+        linear-gradient(140deg, var(--bg-1) 0%, var(--bg-2) 55%, #f9f5ee 100%);
+    }
+
+    .shell {
+      width: min(1160px, calc(100% - 1.2rem));
+      margin: 0.8rem auto 2rem;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0.63));
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+      overflow: hidden;
+      animation: enter 760ms cubic-bezier(.23,.99,.31,1.01) both;
+    }
+
+    @keyframes enter {
+      from { opacity: 0; transform: translateY(16px) scale(0.985); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    @keyframes lift-in {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 0.95rem 1.25rem;
+      border-bottom: 1px solid var(--stroke);
+      background: rgba(255, 255, 255, 0.55);
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.65rem;
+      font-weight: 800;
+      font-size: 1.02rem;
+    }
+
+    .brand-mark {
+      width: 2.1rem;
+      height: 2.1rem;
+      border-radius: 0.72rem;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      font-family: "Space Grotesk", sans-serif;
+      background: linear-gradient(150deg, #38bdf8, #0ea5e9);
+      box-shadow: 0 12px 22px rgba(14, 165, 233, 0.35);
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      border: 1px solid var(--stroke);
+      background: rgba(255, 255, 255, 0.82);
+      border-radius: 999px;
+      color: var(--muted);
+      font-size: 0.86rem;
+      padding: 0.35rem 0.75rem;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 1.1rem;
+      padding: 1.55rem 1.3rem 1.25rem;
+      position: relative;
+    }
+
+    .hero-shape {
+      position: absolute;
+      top: 7%;
+      right: 4%;
+      width: 44%;
+      height: 74%;
+      border-radius: 22px;
+      border: 1px solid rgba(15, 92, 86, 0.14);
+      background:
+        linear-gradient(rgba(24, 147, 135, 0.07) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(24, 147, 135, 0.07) 1px, transparent 1px);
+      background-size: 15px 15px;
+      transform: rotate(-5deg);
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2rem, 5.5vw, 3.55rem);
+      line-height: 1.16;
+      letter-spacing: -0.012em;
+      animation: lift-in 560ms ease both;
+      position: relative;
+      z-index: 1;
+    }
+
+    .em {
+      color: var(--teal-700);
+      position: relative;
+      white-space: nowrap;
+    }
+
+    .em::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0.08em;
+      height: 0.2em;
+      border-radius: 999px;
+      background: linear-gradient(90deg, color-mix(in oklab, var(--sand) 88%, white 12%), #ffe8d0);
+      z-index: -1;
+    }
+
+    .subtitle {
+      margin: 1rem 0 1.3rem;
+      color: var(--muted);
+      font-size: 1rem;
+      line-height: 2;
+      font-weight: 500;
+      max-width: 62ch;
+      position: relative;
+      z-index: 1;
+    }
+
+    .cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.65rem;
+      animation: lift-in 720ms ease both;
+      position: relative;
+      z-index: 1;
+    }
+
+    .btn {
+      border: 0;
+      border-radius: 13px;
+      padding: 0.8rem 1.15rem;
+      font: inherit;
+      font-weight: 700;
+      text-decoration: none;
+      transition: transform 220ms ease, box-shadow 220ms ease;
+    }
+
+    .btn:hover { transform: translateY(-1px); }
+
+    .btn-main {
+      background: linear-gradient(160deg, #189387, var(--teal-700));
+      color: #fff;
+      box-shadow: 0 14px 26px rgba(15, 92, 86, 0.33);
+    }
+
+    .btn-ghost {
+      background: rgba(255, 255, 255, 0.8);
+      color: var(--ink);
+      border: 1px solid var(--stroke);
+    }
+
+    .mock-wrap {
+      position: relative;
+      min-height: 370px;
+      display: grid;
+      place-items: center;
+      z-index: 1;
+    }
+
+    .glow {
+      position: absolute;
+      inset: 8% 16%;
+      border-radius: 30px;
+      background: radial-gradient(circle at 50% 50%, rgba(23, 129, 119, 0.36), rgba(255,255,255,0));
+      filter: blur(6px);
+      z-index: 0;
+    }
+
+    .phone {
+      position: relative;
+      width: min(320px, 88%);
+      border-radius: 28px;
+      border: 1px solid rgba(15, 92, 86, 0.18);
+      background: linear-gradient(180deg, #f7fffc, #e5f4ef);
+      box-shadow: 0 24px 45px rgba(15, 92, 86, 0.25);
+      padding: 0.95rem;
+      z-index: 1;
+      overflow: hidden;
+    }
+
+    .phone::after {
+      content: "";
+      position: absolute;
+      top: -18%;
+      right: -32%;
+      width: 52%;
+      height: 145%;
+      transform: rotate(24deg);
+      background: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0));
+      pointer-events: none;
+    }
+
+    .phone-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.8rem;
+      color: var(--teal-700);
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+
+    .streak {
+      border-radius: 12px;
+      background: #fff;
+      border: 1px solid rgba(15, 92, 86, 0.14);
+      padding: 0.7rem;
+      margin-bottom: 0.55rem;
+    }
+
+    .streak strong {
+      display: block;
+      font-size: 1.2rem;
+      color: var(--teal-700);
+      margin-bottom: 0.25rem;
+    }
+
+    .bar {
+      width: 100%;
+      height: 9px;
+      border-radius: 999px;
+      background: #d9ebe6;
+      overflow: hidden;
+      margin-top: 0.45rem;
+    }
+
+    .bar > span {
+      display: block;
+      width: 72%;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--teal-300), var(--teal-600));
+    }
+
+    .rank-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.5rem;
+      margin-top: 0.6rem;
+    }
+
+    .rank {
+      border-radius: 10px;
+      background: #fff;
+      border: 1px solid rgba(15, 92, 86, 0.14);
+      padding: 0.45rem;
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .rank b {
+      display: block;
+      color: var(--teal-700);
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 0.96rem;
+      margin-bottom: 0.08rem;
+    }
+
+    .trust-strip {
+      margin: 0 1.3rem 0.9rem;
+      border: 1px solid var(--stroke);
+      border-radius: 14px;
+      padding: 0.68rem 0.85rem;
+      background: linear-gradient(145deg, rgba(255,255,255,0.82), rgba(236,250,245,0.75));
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+      font-size: 0.87rem;
+      font-weight: 600;
+    }
+
+    .trust-chip {
+      border-radius: 999px;
+      padding: 0.3rem 0.62rem;
+      border: 1px solid rgba(15, 92, 86, 0.15);
+      background: rgba(255, 255, 255, 0.82);
+    }
+
+    .section {
+      padding: 0.8rem 1.3rem 1.65rem;
+    }
+
+    .section h2 {
+      margin: 0 0 1.05rem;
+      font-size: 1.35rem;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.75rem;
+    }
+
+    .card {
+      border: 1px solid var(--stroke);
+      border-radius: var(--radius-md);
+      background: var(--card);
+      padding: 1rem;
+      transition: transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease;
+      animation: rise 640ms ease both;
+      transform: translateY(6px);
+      opacity: 0;
+      position: relative;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      right: 14px;
+      left: 14px;
+      height: 3px;
+      border-radius: 0 0 999px 999px;
+      background: linear-gradient(90deg, rgba(24, 147, 135, 0.7), rgba(56, 189, 248, 0.65));
+    }
+
+    .card:nth-child(2) { animation-delay: 120ms; }
+    .card:nth-child(3) { animation-delay: 180ms; }
+    .card:nth-child(4) { animation-delay: 240ms; }
+    .card:nth-child(5) { animation-delay: 300ms; }
+    .card:nth-child(6) { animation-delay: 360ms; }
+    .card:nth-child(7) { animation-delay: 420ms; }
+    .card:nth-child(8) { animation-delay: 480ms; }
+
+    @keyframes rise {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(23, 129, 119, 0.3);
+      box-shadow: 0 12px 28px rgba(15, 92, 86, 0.12);
+      background: linear-gradient(165deg, rgba(255, 255, 255, 0.94), rgba(240, 252, 248, 0.86));
+    }
+
+    .icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 11px;
+      display: grid;
+      place-items: center;
+      color: var(--teal-700);
+      margin-bottom: 0.55rem;
+      background: linear-gradient(150deg, rgba(23, 129, 119, 0.12), rgba(255, 211, 167, 0.35));
+      border: 1px solid rgba(23, 129, 119, 0.2);
+      font-size: 0.95rem;
+      font-weight: 800;
+      font-family: "Space Grotesk", sans-serif;
+    }
+
+    .card h3 {
+      margin: 0 0 0.36rem;
+      font-size: 1.01rem;
+    }
+
+    .card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.95;
+    }
+
+    .launch {
+      margin-top: 0.75rem;
+      border: 1px solid var(--stroke);
+      border-radius: 16px;
+      background: linear-gradient(140deg, rgba(255,255,255,0.8), rgba(237,250,246,0.9));
+      padding: 0.85rem;
+    }
+
+    .store-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.52rem;
+      margin-top: 0.7rem;
+    }
+
+    .store-badge {
+      border: 1px solid rgba(15, 92, 86, 0.2);
+      background: #fff;
+      border-radius: 14px;
+      width: 152px;
+      min-height: 56px;
+      padding: 0.45rem 0.55rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--teal-700);
+      box-shadow: 0 6px 14px rgba(15, 92, 86, 0.08);
+    }
+
+    .store-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 9px;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      font-size: 0.72rem;
+      font-weight: 800;
+      font-family: "Space Grotesk", sans-serif;
+      background: linear-gradient(145deg, #189387, #0f5c56);
+      flex: 0 0 28px;
+    }
+
+    .store-text {
+      display: grid;
+      line-height: 1.2;
+      gap: 0.08rem;
+    }
+
+    .store-title {
+      font-size: 0.82rem;
+      font-weight: 800;
+      color: var(--teal-700);
+    }
+
+    .store-soon {
+      color: var(--muted);
+      font-size: 0.73rem;
+      font-weight: 700;
+    }
+
+    .footer {
+      border-top: 1px solid var(--stroke);
+      padding: 1rem 1.3rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      font-size: 0.84rem;
+      color: var(--muted);
+    }
+
+    @media (max-width: 960px) {
+      .hero { grid-template-columns: 1fr; }
+      .cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .mock-wrap { min-height: 340px; }
+      .hero-shape { width: 58%; right: 6%; }
+    }
+
+    @media (max-width: 640px) {
+      .shell { width: calc(100% - 0.8rem); border-radius: 20px; }
+      .topbar { padding: 0.8rem 0.95rem; }
+      .hero, .section, .footer { padding-inline: 0.95rem; }
+      .cards { grid-template-columns: 1fr; }
+      .rank-grid { grid-template-columns: 1fr 1fr; }
+      h1 { font-size: clamp(1.7rem, 10.2vw, 2.6rem); }
+      .trust-strip { margin-inline: 0.95rem; }
+      .store-badge { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-mark">G</span>
+        <span>Glotts App</span>
+      </div>
+      <span class="pill">نسخه عمومی: به‌زودی</span>
+    </header>
+
+    <section class="hero">
+      <div class="hero-shape" aria-hidden="true"></div>
+      <div>
+        <h1>یادگیری زبان با <span class="em">مسیر هوشمند</span> و تمرین روزانه</h1>
+        <p class="subtitle">
+          Glotts یک اپ یادگیری زبان برای ساختن عادت مطالعه کوتاه، مرور هدفمند و پیشرفت واقعی است.
+          با چند دقیقه تمرین در روز، مکالمه و درک زبان را قدم‌به‌قدم ارتقا می‌دهی.
+        </p>
+        <div class="cta-row">
+          <a class="btn btn-ghost" href="#features">مشاهده امکانات</a>
+        </div>
+      </div>
+
+      <aside class="mock-wrap" aria-label="نمایش پیشرفت اپ">
+        <div class="glow"></div>
+        <div class="phone">
+          <div class="phone-top">
+            <span>پیشرفت امروز</span>
+            <span>۷۲٪</span>
+          </div>
+          <div class="streak">
+            <strong>۱۲ روز متوالی</strong>
+            <span style="color: var(--muted); font-size: 0.86rem;">برنامه روزانه را حفظ کرده‌ای</span>
+            <div class="bar"><span></span></div>
+          </div>
+          <div class="rank-grid">
+            <div class="rank"><b>L1</b>شروع</div>
+            <div class="rank"><b>L2</b>درحال‌رشد</div>
+            <div class="rank"><b>L3</b>میانی</div>
+            <div class="rank"><b>L4</b>پیشرفته</div>
+          </div>
+        </div>
+      </aside>
+    </section>
+
+    <section class="trust-strip" aria-label="شاخص های اعتماد">
+      <span class="trust-chip">تمرین کوتاه روزانه</span>
+      <span class="trust-chip">مسیر یادگیری شخصی</span>
+      <span class="trust-chip">پشتیبانی از ۱۱ زبان</span>
+      <span class="trust-chip">رتبه بندی پیش فرض: سطح ۱</span>
+    </section>
+
+    <section id="features" class="section">
+      <h2>خلاصه امکانات هر بخش</h2>
+      <div class="cards">
+        <article class="card">
+          <div class="icon">01</div>
+          <h3>بخش Courses و Lessons</h3>
+          <p>یادگیری به مسیر مرحله‌ای تقسیم شده است: سطح، دسته، زیر‌دسته و درس تا بدانی دقیقاً از کجا شروع کنی و بعدی چیست.</p>
+        </article>
+
+        <article class="card">
+          <div class="icon">02</div>
+          <h3>بخش Review روزانه</h3>
+          <p>مرور اصلی کلمات با تمرکز روی تکرار روزانه انجام می‌شود تا واژه‌ها از حافظه کوتاه‌مدت به بلندمدت منتقل شوند.</p>
+        </article>
+
+        <article class="card">
+          <div class="icon">03</div>
+          <h3>Smart Review (مرور هوشمند)</h3>
+          <p>اپ کلمات سخت‌تر و خطادار را اولویت می‌دهد و نوبت مرور را هوشمند تنظیم می‌کند تا زمانت روی موارد مهم‌تر صرف شود.</p>
+        </article>
+
+        <article class="card">
+          <div class="icon">04</div>
+          <h3>بخش Smart Quiz</h3>
+          <p>کوییز تطبیقی با چند نوع سؤال اجرا می‌شود (معنی، نوشتاری، جای‌خالی و ...)، تا فقط حفظ نکنی و واقعاً یاد بگیری.</p>
+        </article>
+
+        <article class="card">
+          <div class="icon">05</div>
+          <h3>بخش Examples</h3>
+          <p>برای هر واژه و مفهوم، مثال‌های واقعی با ترجمه ارائه می‌شود تا کاربرد کلمه را در جمله و موقعیت واقعی ببینی.</p>
+        </article>
+
+        <article class="card">
+          <div class="icon">06</div>
+          <h3>بخش Visual Grammar</h3>
+          <p>قواعد گرامر به‌صورت بصری و قابل‌فهم نمایش داده می‌شود تا ساختار جمله را سریع‌تر و عملی‌تر درک کنی.</p>
+        </article>
+
+        <article class="card">
+          <div class="icon">07</div>
+          <h3>بخش Progress و رتبه‌بندی</h3>
+          <p>همه از سطح ۱ شروع می‌کنند. رتبه با XP بالا می‌رود: مرور + هر پاسخ درست کوییز ×۲ + تمرین مثال + زمان مطالعه.</p>
+        </article>
+
+        <article class="card" id="download">
+          <div class="icon">08</div>
+          <h3>زبان‌ها، پروفایل و انتشار</h3>
+          <p>پشتیبانی از ۱۱ زبان (رابط و هدف)، مدیریت پروفایل و تنظیمات، و انتشار نسخه عمومی در Google Play، مایکت و بازار.</p>
+          <div class="launch">
+            <div class="store-row">
+              <span class="store-badge">
+                <span class="store-icon">GP</span>
+                <span class="store-text">
+                  <span class="store-title">Google Play</span>
+                  <span class="store-soon">به زودی</span>
+                </span>
+              </span>
+              <span class="store-badge">
+                <span class="store-icon">MK</span>
+                <span class="store-text">
+                  <span class="store-title">مایکت</span>
+                  <span class="store-soon">به زودی</span>
+                </span>
+              </span>
+              <span class="store-badge">
+                <span class="store-icon">BZ</span>
+                <span class="store-text">
+                  <span class="store-title">بازار</span>
+                  <span class="store-soon">به زودی</span>
+                </span>
+              </span>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <span>© 2026 Glotts. All rights reserved.</span>
+      <span>Google Play • مایکت • بازار (به‌زودی)</span>
+    </footer>
+  </main>
+</body>
+</html>
